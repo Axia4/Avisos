@@ -1,13 +1,12 @@
 # -*- mode: python ; coding: utf-8 -*-
 
-import sys
 import os
 from PyInstaller.utils.hooks import collect_submodules
 
-# Path to your script
-script_path = 'conector_cordiax.py'
+# Path to your main script
+script_path = 'conector_cordiax.py'  # Make sure this matches your filename
 
-# Data files to embed in the exe
+# Data files to embed (source, destination)
 datas = [
     ('alarm.wav', '.'),  # Will be accessible via resource_path
     ('ring.wav', '.')
@@ -44,10 +43,10 @@ exe = EXE(
     a.scripts,
     [],
     exclude_binaries=True,
-    name='ConectorCordiax',
+    name='ConectorCordiax',  # This will be the name of your .exe
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
     upx=True,
-    console=False,  # Hide console window
+    console=False,  # No console window
 )
