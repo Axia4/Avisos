@@ -99,8 +99,9 @@ def show_notification(msg, click_url=None, custom_title=None, priority=3):
     global popup_offset, sound_threads
     popup = tk.Toplevel(main_root)
     popup.title(f"Notificación: {custom_title}" if custom_title else "Notificación Cordiax")
-    popup.geometry("420x220")
+    popup.geometry("840x440")  # 2x size
     popup.attributes("-topmost", True)  # Always on top
+    popup.resizable(False, False)  # Disable resizing
 
     with popup_lock:
         y_offset = 50 + popup_offset
@@ -109,35 +110,38 @@ def show_notification(msg, click_url=None, custom_title=None, priority=3):
 
     # High-priority flashing banner
     if priority > 3:
-        banner = tk.Label(popup, text="PRIORITARIO", font=("Arial", 18, "bold"), bg="red", fg="white")
+        banner = tk.Label(popup, text="PRIORITARIO", font=("Arial", 24, "bold"), bg="red", fg="white")
         banner.pack(fill="x")
         def flash():
             current_bg = banner.cget("bg")
-            banner.config(bg="white" if current_bg=="red" else "red")
+            if current_bg == "red":
+                banner.config(bg="white", fg="black")
+            else:
+                banner.config(bg="red", fg="white")
             popup.after(500, flash)
         flash()
 
     # Top frame for icon and message
     top_frame = tk.Frame(popup)
-    top_frame.pack(pady=10, padx=10, fill="x")
+    top_frame.pack(pady=20, padx=20, fill="both", expand=True)
 
     try:
         logo_path = resource_path("logo.ico")
         img = Image.open(logo_path)
-        img = img.resize((48, 48), Image.ANTIALIAS)
+        img = img.resize((96, 96), Image.ANTIALIAS)  # 2x size
         logo_img = ImageTk.PhotoImage(img)
         icon_label = tk.Label(top_frame, image=logo_img)
         icon_label.image = logo_img
-        icon_label.pack(side="right", padx=10)
+        icon_label.pack(side="right", padx=20, pady=20)
     except Exception as e:
         print("Error loading logo.ico:", e, file=sys.stderr)
 
-    label = tk.Label(top_frame, text=msg, wraplength=340, justify="left", font=("Arial", 23))
-    label.pack(side="left", padx=10)
+    label = tk.Label(top_frame, text=msg, wraplength=680, justify="left", font=("Arial", 46))
+    label.pack(side="left", padx=20, pady=20, fill="both", expand=True)
 
-    # Buttons frame
+    # Buttons frame docked at the bottom
     button_frame = tk.Frame(popup)
-    button_frame.pack(pady=10)
+    button_frame.pack(side="bottom", pady=20)
 
     popup_id = id(popup)
     stop_event = threading.Event()
@@ -174,33 +178,33 @@ def show_notification(msg, click_url=None, custom_title=None, priority=3):
 
     if click_url:
         btn_access = tk.Button(button_frame, text="Acceder", command=on_access,
-                               font=("Arial",16,"bold"), width=12, height=2,
+                               font=("Arial",24,"bold"), width=18, height=3,
                                bg="#2196F3", fg="white", activebackground="#1976D2")
-        btn_access.pack(side="left", padx=5)
+        btn_access.pack(side="left", padx=10)
         buttons.append(btn_access)
 
     btn_accept = tk.Button(button_frame, text="Aceptar", command=on_close,
-                           font=("Arial",16,"bold"), width=12, height=2,
+                           font=("Arial",24,"bold"), width=18, height=3,
                            bg="#4CAF50", fg="white", activebackground="#45a049")
-    btn_accept.pack(side="left", padx=5)
+    btn_accept.pack(side="left", padx=10)
     buttons.append(btn_accept)
 
     btn_cordiax = tk.Button(button_frame, text="Abrir Cordiax", command=on_cordiax,
-                            font=("Arial",16,"bold"), width=12, height=2,
+                            font=("Arial",24,"bold"), width=18, height=3,
                             bg="#FF9800", fg="white", activebackground="#FB8C00")
-    btn_cordiax.pack(side="left", padx=5)
+    btn_cordiax.pack(side="left", padx=10)
     buttons.append(btn_cordiax)
 
     # Silenciar button (active initially)
     if priority > 3:
         def on_silenciar():
             stop_sound()
-            silenciar_btn.config(state="disabled", bg="#9E9E9E", activebackground="#9E9E9E")  # Gray when disabled
+            silenciar_btn.config(state="disabled", bg="#9E9E9E", fg="white", activebackground="#9E9E9E")
 
         silenciar_btn = tk.Button(button_frame, text="Silenciar", command=on_silenciar,
-                                  font=("Arial",16,"bold"), width=12, height=2,
+                                  font=("Arial",24,"bold"), width=18, height=3,
                                   bg="#F44336", fg="white", activebackground="#D32F2F")
-        silenciar_btn.pack(side="left", padx=5)
+        silenciar_btn.pack(side="left", padx=10)
         buttons.append(silenciar_btn)
 
     popup.protocol("WM_DELETE_WINDOW", on_close)
