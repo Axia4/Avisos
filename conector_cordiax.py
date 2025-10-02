@@ -221,14 +221,16 @@ def listen_ntfy_worker():
             print("Connection lost:", e, file=sys.stderr)
             set_tray_status((100,180,255), "Desconectado - reintentando...")
             time.sleep(5)
-
-# ----- Start Tray Icon -----
+# ----- Start Tray Icon & Tkinter Loop -----
 def start_tray():
     global icon
+
+    # Function to exit the app
     def on_exit(icon, item):
         icon.stop()
         sys.exit(0)
 
+    # Create the tray icon
     icon = pystray.Icon(
         "conector_cordiax",
         create_icon((200,0,0)),
@@ -237,8 +239,17 @@ def start_tray():
             pystray.MenuItem("Salir", on_exit)
         )
     )
+
+    # Start ntfy listener in a daemon thread
     threading.Thread(target=listen_ntfy_worker, daemon=True).start()
+
+    # Start Tkinter mainloop in a separate daemon thread so `after()` callbacks run
+    threading.Thread(target=main_root.mainloop, daemon=True).start()
+
+    # Start processing the notification queue (via after)
     main_root.after(100, process_queue)
+
+    # Run pystray icon in the main thread (blocking here is fine)
     icon.run()
 
 # ----- Main -----
