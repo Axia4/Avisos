@@ -1,21 +1,29 @@
 # -*- mode: python ; coding: utf-8 -*-
 
 import sys
+import os
 from PyInstaller.utils.hooks import collect_submodules, collect_dynamic_libs
 
 block_cipher = None
+
+# Hidden imports
 hidden_imports = collect_submodules('pystray')
 
-# Include your WAV files in the bundle
+# Include WAV files
 datas = [
     ('ring.wav', '.'), 
     ('alarm.wav', '.')
 ]
 
-# Collect dynamic libraries (DLLs) from PIL/Pillow and pystray
-binaries = []
-binaries += collect_dynamic_libs('PIL')
+# Collect DLLs from Pillow
+binaries = collect_dynamic_libs('PIL')
+# Collect DLLs from pystray (if any)
 binaries += collect_dynamic_libs('pystray')
+
+# Add python311.dll manually
+python_dll = os.path.join(sys.base_prefix, 'python311.dll')
+if os.path.exists(python_dll):
+    binaries.append((python_dll, '.'))
 
 a = Analysis(
     ['conector_cordiax.py'],
@@ -44,7 +52,7 @@ exe = EXE(
     bootloader_ignore_signals=False,
     strip=False,
     upx=True,
-    console=False,
-    icon=None,
-    onefile=True
+    console=False,       # GUI only
+    icon=None,           # Optional: add your icon here
+    onefile=True         # Single EXE
 )
