@@ -42,7 +42,7 @@ def load_config():
         topic_var = tk.StringVar(value=config.get("topic", ""))
         tk.Entry(root, textvariable=topic_var, width=40).pack()
 
-        tk.Label(root, text="Introduce la URL de Cordiax:").pack(pady=(20, 5))
+        tk.Label(root, text="Introduce la URL de iControl:").pack(pady=(20, 5))
         url_var = tk.StringVar(value=config.get("cordiax_url", ""))
         tk.Entry(root, textvariable=url_var, width=40).pack()
 
@@ -100,7 +100,7 @@ main_root.iconbitmap(resource_path("logo.ico"))
 def show_notification(msg, click_url=None, custom_title=None, priority=3):
     global popup_offset, sound_threads
     popup = tk.Toplevel(main_root)
-    popup.title(f"Notificación: {custom_title}" if custom_title else "Notificación Cordiax")
+    popup.title("Notificación iControl")
     popup.geometry("840x440")  # 2x size
     popup.attributes("-topmost", True)  # Always on top
     popup.resizable(False, False)  # Disable resizing
@@ -185,7 +185,7 @@ def show_notification(msg, click_url=None, custom_title=None, priority=3):
     btn_height = 1
 
     if click_url:
-        btn_access = tk.Button(button_frame, text="Abrir URL", command=on_access,
+        btn_access = tk.Button(button_frame, text=custom_title, command=on_access,
                                font=btn_font, width=btn_width, height=btn_height,
                                bg="#2196F3", fg="white", activebackground="#1976D2")
         btn_access.pack(side="left", padx=5)
@@ -195,7 +195,7 @@ def show_notification(msg, click_url=None, custom_title=None, priority=3):
                            bg="#4CAF50", fg="white", activebackground="#45a049")
     btn_accept.pack(side="left", padx=5)
 
-    btn_cordiax = tk.Button(button_frame, text="Abrir Cordiax", command=on_cordiax,
+    btn_cordiax = tk.Button(button_frame, text="iControl", command=on_cordiax,
                             font=btn_font, width=btn_width, height=btn_height,
                             bg="#FF9800", fg="white", activebackground="#FB8C00")
     btn_cordiax.pack(side="left", padx=5)
@@ -273,9 +273,9 @@ def start_tray():
 
     # Create the tray icon
     icon = pystray.Icon(
-        "conector_cordiax",
+        "iax_avisos",
         create_icon((200,0,0)),
-        "Conector Cordiax",
+        "iAvisos",
         menu=pystray.Menu(
             pystray.MenuItem("Salir", on_exit)
         )
