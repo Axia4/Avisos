@@ -20,8 +20,9 @@ binaries = collect_dynamic_libs('PIL')
 # Collect DLLs from pystray (if any)
 binaries += collect_dynamic_libs('pystray')
 
-# Add python311.dll manually
-python_dll = os.path.join(sys.base_prefix, 'python311.dll')
+# Add python DLL manually (dynamically detect version)
+python_version = f'python{sys.version_info.major}{sys.version_info.minor}.dll'
+python_dll = os.path.join(sys.base_prefix, python_version)
 if os.path.exists(python_dll):
     binaries.append((python_dll, '.'))
 
