@@ -36,6 +36,7 @@ def load_config():
         root.title("Configuración Inicial")
         root.geometry("400x200")
         root.resizable(False, False)
+        root.iconbitmap(resource_path("logo.ico"))  # <<< set icon here
 
         tk.Label(root, text="Introduce el topic de ntfy.sh:").pack(pady=(20, 5))
         topic_var = tk.StringVar(value=config.get("topic", ""))
@@ -94,6 +95,7 @@ def set_tray_status(color, tooltip):
 # ----- Notification Popup -----
 main_root = tk.Tk()
 main_root.withdraw()  # hide main window
+main_root.iconbitmap(resource_path("logo.ico"))
 
 def show_notification(msg, click_url=None, custom_title=None, priority=3):
     global popup_offset, sound_threads
