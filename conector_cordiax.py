@@ -136,7 +136,7 @@ def show_notification(msg, click_url=None, custom_title=None, priority=3):
     except Exception as e:
         print("Error loading logo.ico:", e, file=sys.stderr)
 
-    label = tk.Label(top_frame, text=msg, wraplength=680, justify="left", font=("Arial", 46))
+    label = tk.Label(top_frame, text=msg, wraplength=680, justify="center", font=("Arial", 25))
     label.pack(side="left", padx=20, pady=20, fill="both", expand=True)
 
     # Buttons frame docked at the bottom
@@ -180,19 +180,19 @@ def show_notification(msg, click_url=None, custom_title=None, priority=3):
         btn_access = tk.Button(button_frame, text="Acceder", command=on_access,
                                font=("Arial",24,"bold"), width=18, height=3,
                                bg="#2196F3", fg="white", activebackground="#1976D2")
-        btn_access.pack(side="left", padx=10)
+        btn_access.pack(side="left", padx=3)
         buttons.append(btn_access)
 
     btn_accept = tk.Button(button_frame, text="Aceptar", command=on_close,
                            font=("Arial",24,"bold"), width=18, height=3,
                            bg="#4CAF50", fg="white", activebackground="#45a049")
-    btn_accept.pack(side="left", padx=10)
+    btn_accept.pack(side="left", padx=3)
     buttons.append(btn_accept)
 
     btn_cordiax = tk.Button(button_frame, text="Abrir Cordiax", command=on_cordiax,
                             font=("Arial",24,"bold"), width=18, height=3,
                             bg="#FF9800", fg="white", activebackground="#FB8C00")
-    btn_cordiax.pack(side="left", padx=10)
+    btn_cordiax.pack(side="left", padx=3)
     buttons.append(btn_cordiax)
 
     # Silenciar button (active initially)
