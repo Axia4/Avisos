@@ -193,7 +193,7 @@ def show_notification(msg, click_url=None, custom_title=None, priority=3):
     btn_accept.pack(side="left", padx=5)
     buttons.append(btn_accept)
 
-    btn_cordiax = tk.Button(button_frame, text="Abrir Panel", command=on_cordiax,
+    btn_cordiax = tk.Button(button_frame, text="Abrir Cordiax", command=on_cordiax,
                             font=btn_font, width=btn_width, height=btn_height,
                             bg="#FF9800", fg="white", activebackground="#FB8C00")
     btn_cordiax.pack(side="left", padx=5)
