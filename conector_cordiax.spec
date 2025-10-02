@@ -2,32 +2,29 @@
 
 import sys
 import os
+from PyInstaller.utils.hooks import collect_submodules
 
-# ----- Path to your script -----
+# Path to your script
 script_path = 'conector_cordiax.py'
 
-# ----- Data files -----
-# Adjust these paths if your sound files are located elsewhere
+# Data files to embed in the exe
 datas = [
-    ('alarm.wav', '.'),  # Source file, destination folder
+    ('alarm.wav', '.'),  # Will be accessible via resource_path
     ('ring.wav', '.')
 ]
 
-# ----- Hidden imports -----
-# PyInstaller sometimes needs explicit imports for pystray & PIL
-hiddenimports = [
+# Hidden imports that PyInstaller may not detect automatically
+hiddenimports = collect_submodules('pystray') + [
     'PIL._tkinter_finder',
-    'pystray._win32',
     'requests',
     'playsound',
 ]
 
-# ----- PyInstaller build spec -----
 block_cipher = None
 
 a = Analysis(
     [script_path],
-    pathex=[os.path.abspath('.')],  # Current directory
+    pathex=[os.path.abspath('.')],  
     binaries=[],
     datas=datas,
     hiddenimports=hiddenimports,
@@ -52,16 +49,5 @@ exe = EXE(
     bootloader_ignore_signals=False,
     strip=False,
     upx=True,
-    console=False  # Hide console window
-)
-
-coll = COLLECT(
-    exe,
-    a.binaries,
-    a.zipfiles,
-    a.datas,
-    strip=False,
-    upx=True,
-    upx_exclude=[],
-    name='ConectorCordiax'
+    console=False,  # Hide console window
 )
