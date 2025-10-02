@@ -26,7 +26,8 @@ jobs:
 
       - name: Build EXE with PyInstaller
         run: |
-          pyinstaller --onefile --windowed --icon=logo.ico -n ConectorCordiax conector_cordiax.py
+          pyinstaller --onefile --windowed --icon=logo.ico --add-data "logo.ico;." --add-data "alarm.wav;." --add-data "ring.wav;." -n ConectorCordiax conector_cordiax.py
+
 
       - name: Create GitHub Release with EXE
         uses: ncipollo/release-action@v1
