@@ -1,7 +1,7 @@
 # -*- mode: python ; coding: utf-8 -*-
 
 import sys
-from PyInstaller.utils.hooks import collect_submodules
+from PyInstaller.utils.hooks import collect_submodules, collect_dynamic_libs
 
 block_cipher = None
 hidden_imports = collect_submodules('pystray')
@@ -12,10 +12,15 @@ datas = [
     ('alarm.wav', '.')
 ]
 
+# Collect dynamic libraries (DLLs) from PIL/Pillow and pystray
+binaries = []
+binaries += collect_dynamic_libs('PIL')
+binaries += collect_dynamic_libs('pystray')
+
 a = Analysis(
     ['conector_cordiax.py'],
     pathex=[],
-    binaries=[],
+    binaries=binaries,
     datas=datas,
     hiddenimports=hidden_imports,
     hookspath=[],
