@@ -6,11 +6,17 @@ from PyInstaller.utils.hooks import collect_submodules
 block_cipher = None
 hidden_imports = collect_submodules('pystray')
 
+# Include your WAV files in the bundle
+datas = [
+    ('ring.wav', '.'), 
+    ('alarm.wav', '.')
+]
+
 a = Analysis(
     ['conector_cordiax.py'],
     pathex=[],
-    binaries=[('ring.wav','.'),('alarm.wav','.')],
-    datas=[],
+    binaries=[],
+    datas=datas,
     hiddenimports=hidden_imports,
     hookspath=[],
     runtime_hooks=[],
@@ -20,6 +26,7 @@ a = Analysis(
     cipher=block_cipher,
     noarchive=False
 )
+
 pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
 
 exe = EXE(
@@ -33,5 +40,6 @@ exe = EXE(
     strip=False,
     upx=True,
     console=False,
-    icon=None
+    icon=None,
+    onefile=True
 )
