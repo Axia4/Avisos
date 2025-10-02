@@ -106,7 +106,7 @@ def show_notification(msg, click_url=None, custom_title=None, priority=3):
     with popup_lock:
         y_offset = 50 + popup_offset
         popup_offset += 40
-    popup.geometry(f"+100+{y_offset}")
+    # popup.geometry(f"+100+{y_offset}")
 
     # High-priority flashing banner
     if priority > 3:
