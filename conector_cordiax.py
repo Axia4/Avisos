@@ -9,7 +9,6 @@ from playsound import playsound
 import pystray
 from PIL import Image, ImageDraw
 import time
-import sys
 
 # ----- Resource Path for PyInstaller compatibility -----
 def resource_path(relative_path):
@@ -19,7 +18,7 @@ def resource_path(relative_path):
         base_path = os.path.abspath(".")
     return os.path.join(base_path, relative_path)
 
-# ----- Config File -----
+# ----- Config File with GUI Input -----
 CONFIG_FILE = os.path.join(os.path.expanduser("~"), "AjustesConectorCordiax.json")
 
 def load_config():
@@ -30,12 +29,31 @@ def load_config():
                 config = json.load(f)
         except:
             pass
-    if "topic" not in config:
-        config["topic"] = input("Introduce el topic de ntfy.sh: ").strip()
-    if "cordiax_url" not in config:
-        config["cordiax_url"] = input("Introduce la URL de Cordiax: ").strip()
-    with open(CONFIG_FILE, "w") as f:
-        json.dump(config, f, indent=4)
+
+    if "topic" not in config or "cordiax_url" not in config:
+        root = tk.Tk()
+        root.title("Configuración Inicial")
+        root.geometry("400x200")
+        root.resizable(False, False)
+
+        tk.Label(root, text="Introduce el topic de ntfy.sh:").pack(pady=(20, 5))
+        topic_var = tk.StringVar(value=config.get("topic", ""))
+        tk.Entry(root, textvariable=topic_var, width=40).pack()
+
+        tk.Label(root, text="Introduce la URL de Cordiax:").pack(pady=(20, 5))
+        url_var = tk.StringVar(value=config.get("cordiax_url", ""))
+        tk.Entry(root, textvariable=url_var, width=40).pack()
+
+        def save_and_close():
+            config["topic"] = topic_var.get().strip()
+            config["cordiax_url"] = url_var.get().strip()
+            with open(CONFIG_FILE, "w") as f:
+                json.dump(config, f, indent=4)
+            root.destroy()
+
+        tk.Button(root, text="Guardar", command=save_and_close).pack(pady=20)
+        root.mainloop()
+
     return config
 
 config = load_config()
@@ -193,4 +211,8 @@ def start_tray():
     icon.run()
 
 if __name__=="__main__":
+    # Prevent console window in onefile GUI mode
+    if getattr(sys, 'frozen', False):
+        import ctypes
+        ctypes.windll.user32.ShowWindow(ctypes.windll.kernel32.GetConsoleWindow(), 0)
     start_tray()
