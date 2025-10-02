@@ -176,12 +176,12 @@ def show_notification(msg, click_url=None, custom_title=None, priority=3):
     # Define button styles individually with large font, smaller width/height
     buttons = []
 
-    btn_font = ("Arial", 24, "bold")  # keep font large
+    btn_font = ("Arial", 20, "bold")  # keep font large
     btn_width = 10   # smaller width
     btn_height = 1   # smaller height
 
     if click_url:
-        btn_access = tk.Button(button_frame, text="Acceder", command=on_access,
+        btn_access = tk.Button(button_frame, text="Abrir URL", command=on_access,
                                font=btn_font, width=btn_width, height=btn_height,
                                bg="#2196F3", fg="white", activebackground="#1976D2")
         btn_access.pack(side="left", padx=5)
@@ -193,7 +193,7 @@ def show_notification(msg, click_url=None, custom_title=None, priority=3):
     btn_accept.pack(side="left", padx=5)
     buttons.append(btn_accept)
 
-    btn_cordiax = tk.Button(button_frame, text="Abrir Cordiax", command=on_cordiax,
+    btn_cordiax = tk.Button(button_frame, text="Abrir Panel", command=on_cordiax,
                             font=btn_font, width=btn_width, height=btn_height,
                             bg="#FF9800", fg="white", activebackground="#FB8C00")
     btn_cordiax.pack(side="left", padx=5)
@@ -230,10 +230,11 @@ def process_queue():
         print("D.", data.get("event"))
         if data.get("event") == "message":
             print("F.", msg)
-            try:
-                playsound(resource_path("ring.wav"), block=False)
-            except:
-                pass
+            if priority <= 3:
+                try:
+                    playsound(resource_path("ring.wav"), block=False)
+                except:
+                    pass
             set_tray_status((0,200,0), "Nueva notificación")
             show_notification(msg, click_url, custom_title, priority)
 
