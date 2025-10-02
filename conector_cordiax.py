@@ -60,7 +60,7 @@ def load_config():
 config = load_config()
 TOPIC = config["topic"]
 CORDIAX_URL = config["cordiax_url"]
-NTFY_URL = f"https://ntfy.sh/{TOPIC}/sse"
+NTFY_URL = f"https://ntfy.sh/{TOPIC}/json"
 
 # ----- Global Variables -----
 icon = None
@@ -185,7 +185,7 @@ def process_queue():
         click_url = data.get("click")
         custom_title = data.get("title")
         priority = data.get("priority",3)
-        if msg != "":
+        if data.get("event") == "message":
             try:
                 playsound(resource_path("ring.wav"), block=False)
             except:
@@ -205,9 +205,9 @@ def listen_ntfy_worker():
             set_tray_status((200,0,0), "Conectado (esperando)")
             with requests.get(NTFY_URL, headers=headers, stream=True, timeout=60) as r:
                 for line in r.iter_lines():
-                    if line and line.startswith(b"data:"):
+                    if line:
                         try:
-                            data = json.loads(line[5:].decode("utf-8"))
+                            data = json.loads(line.decode("utf-8"))
                             notification_queue.put(data)
                         except Exception as e:
                             print("Error parsing message:", e, file=sys.stderr)
