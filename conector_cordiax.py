@@ -59,7 +59,7 @@ def load_config():
 config = load_config()
 TOPIC = config["topic"]
 CORDIAX_URL = config["cordiax_url"]
-NTFY_URL = f"https://ntfy.sh/{TOPIC}"
+NTFY_URL = f"https://ntfy.sh/{TOPIC}/sse"
 
 # Global Variables
 icon = None
