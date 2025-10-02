@@ -37,7 +37,7 @@ jobs:
           name: Conector-Cordiax_Windows
       - uses: ncipollo/release-action@v1
         with:
-          artifacts: "conector_cordiax.exe"
+          artifacts: "ConectorCordiax.exe"
           prerelease: true
           allowUpdates: true
           omitBodyDuringUpdate: true
