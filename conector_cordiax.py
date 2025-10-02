@@ -100,29 +100,38 @@ def show_notification(msg, click_url=None, custom_title=None, priority=3):
     popup = tk.Toplevel(main_root)
     popup.title(f"Notificación: {custom_title}" if custom_title else "Notificación Cordiax")
     popup.geometry("420x220")
+    popup.attributes("-topmost", True)  # Always on top
 
     with popup_lock:
         y_offset = 50 + popup_offset
         popup_offset += 40
     popup.geometry(f"+100+{y_offset}")
 
+    # High-priority flashing banner
+    if priority > 3:
+        banner = tk.Label(popup, text="PRIORITARIO", font=("Arial", 18, "bold"), bg="red", fg="white")
+        banner.pack(fill="x")
+        def flash():
+            current_bg = banner.cget("bg")
+            banner.config(bg="white" if current_bg=="red" else "red")
+            popup.after(500, flash)
+        flash()
+
     # Top frame for icon and message
     top_frame = tk.Frame(popup)
     top_frame.pack(pady=10, padx=10, fill="x")
 
-    # Load logo.ico
     try:
         logo_path = resource_path("logo.ico")
         img = Image.open(logo_path)
         img = img.resize((48, 48), Image.ANTIALIAS)
         logo_img = ImageTk.PhotoImage(img)
         icon_label = tk.Label(top_frame, image=logo_img)
-        icon_label.image = logo_img  # keep reference
+        icon_label.image = logo_img
         icon_label.pack(side="right", padx=10)
     except Exception as e:
         print("Error loading logo.ico:", e, file=sys.stderr)
 
-    # Message label with big font
     label = tk.Label(top_frame, text=msg, wraplength=340, justify="left", font=("Arial", 23))
     label.pack(side="left", padx=10)
 
@@ -160,15 +169,39 @@ def show_notification(msg, click_url=None, custom_title=None, priority=3):
         webbrowser.open(CORDIAX_URL)
         on_close()
 
-    def on_silenciar():
-        stop_sound()
+    # Define button styles individually
+    buttons = []
 
     if click_url:
-        tk.Button(button_frame, text="Acceder", command=on_access).pack(side="left", padx=10)
-    tk.Button(button_frame, text="Aceptar", command=on_close).pack(side="left", padx=10)
-    tk.Button(button_frame, text="Abrir Cordiax", command=on_cordiax).pack(side="left", padx=10)
+        btn_access = tk.Button(button_frame, text="Acceder", command=on_access,
+                               font=("Arial",16,"bold"), width=12, height=2,
+                               bg="#2196F3", fg="white", activebackground="#1976D2")
+        btn_access.pack(side="left", padx=5)
+        buttons.append(btn_access)
+
+    btn_accept = tk.Button(button_frame, text="Aceptar", command=on_close,
+                           font=("Arial",16,"bold"), width=12, height=2,
+                           bg="#4CAF50", fg="white", activebackground="#45a049")
+    btn_accept.pack(side="left", padx=5)
+    buttons.append(btn_accept)
+
+    btn_cordiax = tk.Button(button_frame, text="Abrir Cordiax", command=on_cordiax,
+                            font=("Arial",16,"bold"), width=12, height=2,
+                            bg="#FF9800", fg="white", activebackground="#FB8C00")
+    btn_cordiax.pack(side="left", padx=5)
+    buttons.append(btn_cordiax)
+
+    # Silenciar button (active initially)
     if priority > 3:
-        tk.Button(button_frame, text="Silenciar", command=on_silenciar).pack(side="left", padx=10)
+        def on_silenciar():
+            stop_sound()
+            silenciar_btn.config(state="disabled", bg="#9E9E9E", activebackground="#9E9E9E")  # Gray when disabled
+
+        silenciar_btn = tk.Button(button_frame, text="Silenciar", command=on_silenciar,
+                                  font=("Arial",16,"bold"), width=12, height=2,
+                                  bg="#F44336", fg="white", activebackground="#D32F2F")
+        silenciar_btn.pack(side="left", padx=5)
+        buttons.append(silenciar_btn)
 
     popup.protocol("WM_DELETE_WINDOW", on_close)
 
