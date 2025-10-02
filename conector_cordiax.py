@@ -135,7 +135,7 @@ def show_notification(msg, click_url=None, custom_title=None, priority=3):
         yscrollcommand=scrollbar.set, 
         bg=popup.cget("bg"), 
         borderwidth=0,
-        height=8  # FIX: limit height so buttons stay visible
+        height=7  # FIX: limit height so buttons stay visible
     )
     text_widget.insert("1.0", msg)
     text_widget.config(state="disabled")
