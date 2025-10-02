@@ -26,16 +26,16 @@ jobs:
 
       - name: Build EXE with PyInstaller
         run: |
-          pyinstaller --onefile --icon=logo.ico --add-data "logo.ico;." --add-data "alarm.wav;." --add-data "ring.wav;." -n ConectorCordiax_debug conector_cordiax.py
-          pyinstaller --onefile --windowed --icon=logo.ico --add-data "logo.ico;." --add-data "alarm.wav;." --add-data "ring.wav;." -n ConectorCordiax conector_cordiax.py
+          pyinstaller --onefile --icon=logo.ico --add-data "logo.ico;." --add-data "alarm.wav;." --add-data "ring.wav;." -n iAvisos_debug main.py
+          pyinstaller --onefile --windowed --icon=logo.ico --add-data "logo.ico;." --add-data "alarm.wav;." --add-data "ring.wav;." -n iAvisos main.py
 
 
       - name: Create GitHub Release with EXE
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "dist/ConectorCordiax.exe,dist/ConectorCordiax_debug.exe"
+          artifacts: "dist/iAvisos.exe,dist/iAvisos_debug.exe"
           tag: ${{ github.ref_name }}
-          name: ${{ github.ref_name }} - Conector Cordiax
+          name: ${{ github.ref_name }} - iax Avisos
           prerelease: false
           allowUpdates: true
           omitBodyDuringUpdate: true
