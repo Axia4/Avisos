@@ -20,7 +20,7 @@ def resource_path(relative_path):
     return os.path.join(base_path, relative_path)
 
 # ----- Config File with GUI Input -----
-CONFIG_FILE = os.path.join(os.path.expanduser("~"), "AjustesConectorCordiax.json")
+CONFIG_FILE = os.path.join(os.path.expanduser("~"), "iaxconfig.avisos.json")
 
 def load_config():
     config = {}
