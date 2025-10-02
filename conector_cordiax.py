@@ -121,23 +121,23 @@ def show_notification(msg, click_url=None, custom_title=None, priority=3):
             popup.after(500, flash)
         flash()
 
-    # Top frame for icon and message
+    # Top frame for message
     top_frame = tk.Frame(popup)
     top_frame.pack(pady=20, padx=20, fill="both", expand=True)
 
-    try:
-        logo_path = resource_path("logo.ico")
-        img = Image.open(logo_path)
-        img = img.resize((96, 96), Image.ANTIALIAS)
-        logo_img = ImageTk.PhotoImage(img)
-        icon_label = tk.Label(top_frame, image=logo_img)
-        icon_label.image = logo_img
-        icon_label.pack(side="right", padx=20, pady=20)
-    except Exception as e:
-        print("Error loading logo.ico:", e, file=sys.stderr)
+    # Scrollable text frame
+    text_frame = tk.Frame(top_frame)
+    text_frame.pack(fill="both", expand=True)
 
-    label = tk.Label(top_frame, text=msg, wraplength=680, justify="center", font=("Arial", 25))
-    label.pack(side="left", padx=20, pady=20, fill="both", expand=True)
+    scrollbar = tk.Scrollbar(text_frame)
+    scrollbar.pack(side="right", fill="y")
+
+    text_widget = tk.Text(text_frame, wrap="word", font=("Arial", 25), yscrollcommand=scrollbar.set, bg=popup.cget("bg"), borderwidth=0)
+    text_widget.insert("1.0", msg)
+    text_widget.config(state="disabled")  # Make it read-only
+    text_widget.pack(side="left", fill="both", expand=True)
+
+    scrollbar.config(command=text_widget.yview)
 
     # Buttons frame docked at the bottom
     button_frame = tk.Frame(popup)
@@ -176,9 +176,9 @@ def show_notification(msg, click_url=None, custom_title=None, priority=3):
     # Define button styles individually with large font, smaller width/height
     buttons = []
 
-    btn_font = ("Arial", 20, "bold")  # keep font large
-    btn_width = 10   # smaller width
-    btn_height = 1   # smaller height
+    btn_font = ("Arial", 24, "bold")
+    btn_width = 10
+    btn_height = 1
 
     if click_url:
         btn_access = tk.Button(button_frame, text="Abrir URL", command=on_access,
