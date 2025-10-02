@@ -1,0 +1,4 @@
+requests
+playsound
+pillow
+pystray
