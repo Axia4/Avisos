@@ -174,8 +174,13 @@ def show_notification(msg, click_url=None, custom_title=None, priority=3):
 
 # ----- Notification Queue Processor -----
 def process_queue():
-    while not notification_queue.empty():
-        data = notification_queue.get()
+    try:
+        # Process only one notification per call
+        data = notification_queue.get_nowait()
+    except queue.Empty:
+        data = None
+
+    if data:
         msg = data.get("message","")
         click_url = data.get("click")
         custom_title = data.get("title")
@@ -187,7 +192,10 @@ def process_queue():
                 pass
             set_tray_status((0,200,0), "Nueva notificación")
             show_notification(msg, click_url, custom_title, priority)
+
+    # Schedule next check in 100 ms
     main_root.after(100, process_queue)
+
 
 # ----- Ntfy Listener Worker -----
 def listen_ntfy_worker():
