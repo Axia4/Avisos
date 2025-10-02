@@ -203,14 +203,14 @@ def listen_ntfy_worker():
     while True:
         try:
             set_tray_status((200,0,0), "Conectado (esperando)")
-            with requests.get(NTFY_URL, headers=headers, stream=True, timeout=60) as r:
-                for line in r.iter_lines():
-                    if line:
-                        try:
-                            data = json.loads(line.decode("utf-8"))
-                            notification_queue.put(data)
-                        except Exception as e:
-                            print("Error parsing message:", e, file=sys.stderr)
+            resp = requests.get("https://ntfy.sh/disk-alerts/json", stream=True)
+            for line in resp.iter_lines():
+                if line:
+                    try:
+                        data = json.loads(line.decode("utf-8"))
+                        notification_queue.put(data)
+                    except Exception as e:
+                        print("Error parsing message:", e, file=sys.stderr)
         except Exception as e:
             print("Connection lost:", e, file=sys.stderr)
             set_tray_status((100,180,255), "Desconectado - reintentando...")
