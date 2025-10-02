@@ -185,7 +185,9 @@ def process_queue():
         click_url = data.get("click")
         custom_title = data.get("title")
         priority = data.get("priority",3)
+        print("D.", data.get("event"))
         if data.get("event") == "message":
+            print("F.", msg)
             try:
                 playsound(resource_path("ring.wav"), block=False)
             except:
@@ -207,7 +209,10 @@ def listen_ntfy_worker():
             for line in resp.iter_lines():
                 if line:
                     try:
+                        print("A.", line)
+                        print("B.", line.decode("utf-8"))
                         data = json.loads(line.decode("utf-8"))
+                        print("C.", data.get("event"))
                         notification_queue.put(data)
                     except Exception as e:
                         print("Error parsing message:", e, file=sys.stderr)
