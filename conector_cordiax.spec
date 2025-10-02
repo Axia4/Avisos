@@ -3,38 +3,41 @@
 import sys
 import os
 from PyInstaller.utils.hooks import collect_submodules, collect_dynamic_libs
-from PyInstaller.utils.win32 import get_system_path
 
 block_cipher = None
 
-# 1️⃣ Hidden imports
+# Hidden imports
 hidden_imports = collect_submodules('pystray')
 
-# 2️⃣ Data files
+# Include WAV files
 datas = [
-    ('ring.wav', '.'),
+    ('ring.wav', '.'), 
     ('alarm.wav', '.')
 ]
 
-# 3️⃣ Collect dynamic libraries from dependencies
-binaries = []
-for pkg in ['PIL', 'pystray']:
-    binaries += collect_dynamic_libs(pkg)
+# Collect DLLs from Pillow and pystray
+binaries = collect_dynamic_libs('PIL') + collect_dynamic_libs('pystray')
 
-# 4️⃣ Include Python DLL
-python_dll_name = f'python{sys.version_info.major}{sys.version_info.minor}.dll'
-python_dll_path = os.path.join(sys.base_prefix, python_dll_name)
-if os.path.exists(python_dll_path):
-    binaries.append((python_dll_path, ''))
+# Include python311.dll manually
+python_dll = os.path.join(sys.base_prefix, 'python311.dll')
+if os.path.exists(python_dll):
+    binaries.append((python_dll, ''))
 
-# 5️⃣ Include MSVC runtime DLLs automatically
-msvc_dlls = ['vcruntime140.dll', 'vcruntime140_1.dll', 'ucrtbase.dll']
+# Manually include MSVC runtime DLLs
+msvc_dlls = [
+    'vcruntime140.dll',
+    'vcruntime140_1.dll',
+    'ucrtbase.dll'
+]
+
 for dll in msvc_dlls:
-    dll_path = get_system_path(dll)
-    if dll_path and os.path.exists(dll_path):
+    dll_path = os.path.join(sys.base_prefix, 'DLLs', dll)
+    if not os.path.exists(dll_path):
+        # Try the system32 folder if not found
+        dll_path = os.path.join(os.environ.get('SystemRoot', r'C:\Windows'), 'System32', dll)
+    if os.path.exists(dll_path):
         binaries.append((dll_path, ''))
 
-# 6️⃣ Analysis
 a = Analysis(
     ['conector_cordiax.py'],
     pathex=[],
@@ -50,10 +53,8 @@ a = Analysis(
     noarchive=False
 )
 
-# 7️⃣ Package pure Python code
 pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
 
-# 8️⃣ EXE creation with UPX compression enabled
 exe = EXE(
     pyz,
     a.scripts,
