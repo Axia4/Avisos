@@ -174,6 +174,7 @@ def show_notification(msg, click_url=None, custom_title=None, priority=3):
 
 # ----- Notification Queue Processor -----
 def process_queue():
+    print("Queue size:", notification_queue.qsize())
     try:
         # Process only one notification per call
         data = notification_queue.get_nowait()
