@@ -203,7 +203,7 @@ def listen_ntfy_worker():
     while True:
         try:
             set_tray_status((200,0,0), "Conectado (esperando)")
-            resp = requests.get("https://ntfy.sh/disk-alerts/json", stream=True)
+            resp = requests.get(NTFY_URL, stream=True)
             for line in resp.iter_lines():
                 if line:
                     try:
