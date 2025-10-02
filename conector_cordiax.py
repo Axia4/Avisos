@@ -106,7 +106,7 @@ def show_notification(msg, click_url=None, custom_title=None, priority=3):
     with popup_lock:
         y_offset = 50 + popup_offset
         popup_offset += 40
-    # popup.geometry(f"+100+{y_offset}")
+    popup.geometry(f"+100+{y_offset}")
 
     # High-priority flashing banner
     if priority > 3:
@@ -121,20 +121,24 @@ def show_notification(msg, click_url=None, custom_title=None, priority=3):
             popup.after(500, flash)
         flash()
 
-    # Top frame for message
-    top_frame = tk.Frame(popup)
-    top_frame.pack(pady=20, padx=20, fill="both", expand=True)
-
-    # Scrollable text frame
-    text_frame = tk.Frame(top_frame)
-    text_frame.pack(fill="both", expand=True)
+    # Frame for scrollable text
+    text_frame = tk.Frame(popup)
+    text_frame.pack(padx=20, pady=20, fill="both", expand=True)
 
     scrollbar = tk.Scrollbar(text_frame)
     scrollbar.pack(side="right", fill="y")
 
-    text_widget = tk.Text(text_frame, wrap="word", font=("Arial", 25), yscrollcommand=scrollbar.set, bg=popup.cget("bg"), borderwidth=0)
+    text_widget = tk.Text(
+        text_frame, 
+        wrap="word", 
+        font=("Arial", 25), 
+        yscrollcommand=scrollbar.set, 
+        bg=popup.cget("bg"), 
+        borderwidth=0,
+        height=8  # FIX: limit height so buttons stay visible
+    )
     text_widget.insert("1.0", msg)
-    text_widget.config(state="disabled")  # Make it read-only
+    text_widget.config(state="disabled")
     text_widget.pack(side="left", fill="both", expand=True)
 
     scrollbar.config(command=text_widget.yview)
@@ -173,9 +177,7 @@ def show_notification(msg, click_url=None, custom_title=None, priority=3):
         webbrowser.open(CORDIAX_URL)
         on_close()
 
-    # Define button styles individually with large font, smaller width/height
-    buttons = []
-
+    # Define button styles individually
     btn_font = ("Arial", 24, "bold")
     btn_width = 10
     btn_height = 1
@@ -185,21 +187,17 @@ def show_notification(msg, click_url=None, custom_title=None, priority=3):
                                font=btn_font, width=btn_width, height=btn_height,
                                bg="#2196F3", fg="white", activebackground="#1976D2")
         btn_access.pack(side="left", padx=5)
-        buttons.append(btn_access)
 
     btn_accept = tk.Button(button_frame, text="Aceptar", command=on_close,
                            font=btn_font, width=btn_width, height=btn_height,
                            bg="#4CAF50", fg="white", activebackground="#45a049")
     btn_accept.pack(side="left", padx=5)
-    buttons.append(btn_accept)
 
     btn_cordiax = tk.Button(button_frame, text="Abrir Cordiax", command=on_cordiax,
                             font=btn_font, width=btn_width, height=btn_height,
                             bg="#FF9800", fg="white", activebackground="#FB8C00")
     btn_cordiax.pack(side="left", padx=5)
-    buttons.append(btn_cordiax)
 
-    # Silenciar button (active initially)
     if priority > 3:
         def on_silenciar():
             stop_sound()
@@ -209,7 +207,6 @@ def show_notification(msg, click_url=None, custom_title=None, priority=3):
                                   font=btn_font, width=btn_width, height=btn_height,
                                   bg="#F44336", fg="white", activebackground="#D32F2F")
         silenciar_btn.pack(side="left", padx=5)
-        buttons.append(silenciar_btn)
 
     popup.protocol("WM_DELETE_WINDOW", on_close)
 
