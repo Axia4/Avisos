@@ -244,7 +244,7 @@ def start_tray():
     threading.Thread(target=listen_ntfy_worker, daemon=True).start()
 
     # Run pystray icon in the main thread (blocking here is fine)
-    threading.Thread(target=icon.run(), daemon=True).start()
+    threading.Thread(target=icon.run, daemon=True).start()
 
     # Start processing the notification queue (via after)
     main_root.after(100, process_queue)
