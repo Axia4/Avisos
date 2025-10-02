@@ -27,7 +27,7 @@ jobs:
 
       - name: Build EXE with PyInstaller
         run: |
-          pyinstaller --onefile conector_cordiax.spec
+          pyinstaller conector_cordiax.spec
 
       - name: Create GitHub Release with EXE
         uses: ncipollo/release-action@v1
