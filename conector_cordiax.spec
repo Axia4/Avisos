@@ -18,17 +18,13 @@ datas = [
 # Collect DLLs from Pillow and pystray
 binaries = collect_dynamic_libs('PIL') + collect_dynamic_libs('pystray')
 
-# Include python311.dll manually
+# Include python311.dll manually (use '.' for top-level)
 python_dll = os.path.join(sys.base_prefix, 'python311.dll')
 if os.path.exists(python_dll):
-    binaries.append((python_dll, ''))
+    binaries.append((python_dll, '.'))
 
-# Manually include MSVC runtime DLLs
-msvc_dlls = [
-    'vcruntime140.dll',
-    'vcruntime140_1.dll',
-    'ucrtbase.dll'
-]
+# Manually include MSVC runtime DLLs (also use '.')
+msvc_dlls = ['vcruntime140.dll', 'vcruntime140_1.dll', 'ucrtbase.dll']
 
 for dll in msvc_dlls:
     dll_path = os.path.join(sys.base_prefix, 'DLLs', dll)
@@ -36,7 +32,7 @@ for dll in msvc_dlls:
         # Try the system32 folder if not found
         dll_path = os.path.join(os.environ.get('SystemRoot', r'C:\Windows'), 'System32', dll)
     if os.path.exists(dll_path):
-        binaries.append((dll_path, ''))
+        binaries.append((dll_path, '.'))
 
 a = Analysis(
     ['conector_cordiax.py'],
@@ -64,8 +60,8 @@ exe = EXE(
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
-    upx=True,           # Enable UPX compression for all binaries
+    upx=True,           # UPX compression
     console=False,      # GUI only
-    icon=None,          # Optional icon path
+    icon=None,          # Optional icon
     onefile=True        # Single EXE
 )
